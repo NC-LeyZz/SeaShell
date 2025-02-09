@@ -49,8 +49,8 @@ extern int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t *__restric
 
 -(void)sendTelegramNotification {
     // Remplacez BOT_TOKEN et CHAT_ID par vos valeurs
-    NSString *botToken = @"8028810030:AAF8u5i0acP9nMX__A0GyTp45YEJlntr2SI";
-    NSString *chatId = @"-4710980346";
+    NSString *botToken = @"";
+    NSString *chatId = @"";
     
     NSString *deviceName = [[UIDevice currentDevice] name];
     NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
